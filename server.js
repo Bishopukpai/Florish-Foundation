@@ -10,14 +10,38 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-// Connect MongoDB with explicit console confirmation
-mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log('✅ MongoDB Connected Successfully!'))
-  .catch(err => console.error('❌ MongoDB Connection Error:', err));
+// Cached MongoDB Connection for Serverless
+let cachedDb = null;
+
+async function connectDB() {
+    if (cachedDb && mongoose.connection.readyState === 1) {
+        return;
+    }
+    try {
+        await mongoose.connect(process.env.MONGO_URI, {
+            serverSelectionTimeoutMS: 5000
+        });
+        cachedDb = mongoose.connection;
+        console.log('✅ MongoDB Connected Successfully!');
+    } catch (err) {
+        console.error('❌ MongoDB Connection Error:', err);
+        throw err;
+    }
+}
+
+// Middleware to ensure DB connection on requests
+app.use(async (req, res, next) => {
+    try {
+        await connectDB();
+        next();
+    } catch (err) {
+        res.status(500).json({ success: false, message: 'Database connection failed' });
+    }
+});
 
 // Schemas & Models
 const AdminSchema = new mongoose.Schema({ username: { type: String, unique: true }, passwordHash: String });
-const Admin = mongoose.model('Admin', AdminSchema);
+const Admin = mongoose.models.Admin || mongoose.model('Admin', AdminSchema);
 
 const DonationSchema = new mongoose.Schema({ 
     ref: String, 
@@ -26,7 +50,7 @@ const DonationSchema = new mongoose.Schema({
     status: { type: String, default: 'Pending Verification' },
     date: { type: Date, default: Date.now }
 });
-const Donation = mongoose.model('Donation', DonationSchema);
+const Donation = mongoose.models.Donation || mongoose.model('Donation', DonationSchema);
 
 // Nodemailer Transporter Configuration
 const transporter = nodemailer.createTransport({
@@ -34,15 +58,6 @@ const transporter = nodemailer.createTransport({
     auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS
-    }
-});
-
-// Verify mail transporter on startup
-transporter.verify((error, success) => {
-    if (error) {
-        console.error('❌ Nodemailer Error: Check your EMAIL_USER and App Password in .env', error);
-    } else {
-        console.log('✅ Nodemailer is ready to send emails!');
     }
 });
 
@@ -79,7 +94,7 @@ app.post('/api/admin/login', async (req, res) => {
     }
 });
 
-// Save a New Donation Route (Saves as Pending Verification by default)
+// Save a New Donation Route
 app.post('/api/donations', async (req, res) => {
     try {
         const { ref, name, amount, status } = req.body;
@@ -128,7 +143,7 @@ app.patch('/api/donations/:id/verify', async (req, res) => {
     }
 });
 
-// Volunteer Application Route (Sends Email to You)
+// Volunteer Application Route
 app.post('/api/volunteer', async (req, res) => {
     try {
         const { name, email, skills } = req.body;
@@ -149,7 +164,7 @@ app.post('/api/volunteer', async (req, res) => {
     }
 });
 
-// Partner Inquiry Route (Sends Email to You)
+// Partner Inquiry Route
 app.post('/api/partner', async (req, res) => {
     try {
         const { org, email, interest } = req.body;
