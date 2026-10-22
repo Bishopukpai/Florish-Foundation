@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <!-- Background Card -->
+  <rect width="200" height="200" rx="40" fill="#0d9488" />
+  
+  <!-- Seedling / Leaf Icon -->
+  <path d="M100 130 C 100 130, 70 110, 70 85 C 70 68, 83 55, 100 55 C 117 55, 130 68, 130 85 C 130 110, 100 130, 100 130 Z" fill="#ffffff" opacity="0.9" />
+  <path d="M100 130 L 100 150" stroke="#ffffff" stroke-width="6" stroke-linecap="round" />
+  <path d="M88 142 L 112 142" stroke="#ffffff" stroke-width="5" stroke-linecap="round" />
+</svg>

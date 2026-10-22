@@ -1,0 +1,39 @@
+/* style.css */
+.scroll-animate {
+    opacity: 0;
+    transform: translateY(40px) scale(0.98);
+    transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: opacity, transform;
+}
+.scroll-animate.active {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+}
+
+.scroll-left {
+    opacity: 0;
+    transform: translateX(-50px);
+    transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.scroll-left.active {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.scroll-right {
+    opacity: 0;
+    transform: translateX(50px);
+    transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.scroll-right.active {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.hover-lift {
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.hover-lift:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 30px -10px rgba(13, 148, 136, 0.15);
+}
