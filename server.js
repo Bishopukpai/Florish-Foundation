@@ -4,6 +4,7 @@ const bcrypt = require('bcryptjs');
 const nodemailer = require('nodemailer');
 const cors = require('cors');
 require('dotenv').config();
+const serverless = require('serverless-http');
 
 const app = express();
 app.use(express.json());
@@ -169,4 +170,4 @@ app.post('/api/partner', async (req, res) => {
     }
 });
 
-app.listen(5000, () => console.log('🚀 Server running smoothly on port 5000'));
+module.exports.handler = serverless(app);

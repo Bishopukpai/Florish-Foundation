@@ -106,7 +106,7 @@ async function confirmTransfer() {
     const refCode = 'FLR-' + Math.floor(10000 + Math.random() * 90000) + '-2026';
 
     try {
-        const response = await fetch('http://localhost:5000/api/donations', {
+        const response = await fetch('/api/donations', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -144,7 +144,7 @@ async function submitVolunteer(e) {
     const skills = document.getElementById('vol-skills').value;
 
     try {
-        const response = await fetch('http://localhost:5000/api/volunteer', {
+        const response = await fetch('/api/volunteer', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ name, email, skills })
@@ -158,7 +158,7 @@ async function submitVolunteer(e) {
         }
     } catch (err) {
         console.error(err);
-        alert('Error connecting to backend server. Make sure server.js is running.');
+        alert('Error connecting to backend server.');
     }
 }
 
@@ -177,7 +177,7 @@ async function submitPartner(e) {
     const interest = document.getElementById('partner-interest').value;
 
     try {
-        const response = await fetch('http://localhost:5000/api/partner', {
+        const response = await fetch('/api/partner', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ org, email, interest })
@@ -191,7 +191,7 @@ async function submitPartner(e) {
         }
     } catch (err) {
         console.error(err);
-        alert('Error connecting to backend server. Make sure server.js is running.');
+        alert('Error connecting to backend server.');
     }
 }
 
@@ -218,7 +218,7 @@ async function handleAdminLogin(e) {
     const password = document.getElementById('admin-login-pass').value;
 
     try {
-        const response = await fetch('http://localhost:5000/api/admin/login', {
+        const response = await fetch('/api/admin/login', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ username, password })
@@ -242,7 +242,7 @@ async function handleAdminSignup(e) {
     const password = document.getElementById('admin-signup-pass').value;
 
     try {
-        const response = await fetch('http://localhost:5000/api/admin/signup', {
+        const response = await fetch('/api/admin/signup', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ username, password })
@@ -262,7 +262,7 @@ async function handleAdminSignup(e) {
 async function openAdminTracker() {
     let donationsLedger = [];
     try {
-        const res = await fetch('http://localhost:5000/api/donations');
+        const res = await fetch('/api/donations');
         donationsLedger = await res.json();
     } catch (err) {
         console.error('Could not fetch ledger', err);
@@ -301,13 +301,13 @@ async function openAdminTracker() {
 // Function to approve pending donations from admin dashboard
 async function verifyDonation(id) {
     try {
-        const res = await fetch(`http://localhost:5000/api/donations/${id}/verify`, {
+        const res = await fetch(`/api/donations/${id}/verify`, {
             method: 'PATCH'
         });
         const data = await res.json();
         if(data.success) {
             alert('Donation approved and verified successfully!');
-            openAdminTracker(); // Refresh table
+            openAdminTracker(); 
         }
     } catch (err) {
         console.error('Failed to verify donation:', err);
